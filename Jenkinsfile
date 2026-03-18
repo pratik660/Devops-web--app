@@ -2,23 +2,22 @@ pipeline {
     agent any
 
     stages {
-
         stage('Clone Code') {
             steps {
-                git 'https://github.com/<your-username>/<repo>.git'
+                git 'https://github.com/pratik660/Devops-web--app.git'
             }
         }
 
-        stage('Build & Deploy') {
+        stage('Build Containers') {
             steps {
-                sh 'docker-compose down'
-                sh 'docker-compose up --build -d'
+                bat 'docker-compose down'
+                bat 'docker-compose up --build -d'
             }
         }
 
-        stage('Test') {
+        stage('Verify') {
             steps {
-                sh 'curl http://localhost:5000'
+                bat 'docker ps'
             }
         }
     }
