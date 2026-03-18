@@ -3,11 +3,11 @@ pipeline {
 
     stages {
         stage('Build & Run') {
-            steps {
-                sh 'docker-compose down || true'
-                sh 'docker-compose up --build -d'
-            }
-        }
+    steps {
+        sh 'docker-compose down'
+        sh 'docker-compose up --build -d'
+    }
+}
 
         stage('Verify') {
             steps {
