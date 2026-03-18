@@ -2,22 +2,16 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Code') {
+        stage('Build & Run') {
             steps {
-                git 'https://github.com/pratik660/Devops-web--app.git'
-            }
-        }
-
-        stage('Build Containers') {
-            steps {
-                bat 'docker-compose down'
-                bat 'docker-compose up --build -d'
+                sh 'docker-compose down || true'
+                sh 'docker-compose up --build -d'
             }
         }
 
         stage('Verify') {
             steps {
-                bat 'docker ps'
+                sh 'docker ps'
             }
         }
     }
