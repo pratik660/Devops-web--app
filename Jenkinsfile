@@ -1,17 +1,46 @@
 pipeline {
+
     agent any
 
-    stages {
-        stage('Build & Run') {
-    steps {
-        sh 'docker-compose down'
-        sh 'docker-compose up --build -d'
+    environment {
+        IMAGE = "YOUR_DOCKERHUB_USERNAME/devops-webapp"
     }
-}
 
-        stage('Verify') {
+    stages {
+
+        stage('Checkout') {
             steps {
-                sh 'docker ps'
+                git 'YOUR_GITHUB_REPO'
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t $IMAGE:latest ./backend'
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub',
+                        usernameVariable: 'USER',
+                        passwordVariable: 'PASS'
+                    )
+                ]) {
+
+                    sh '''
+                    echo $PASS | docker login -u $USER --password-stdin
+                    docker push $IMAGE:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'kubectl apply -f k8s/'
             }
         }
     }
